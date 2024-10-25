@@ -213,7 +213,7 @@
             const userId = "@userManager.GetUserId(User)";
 
             try {
-                const response = await fetch('@Url.Action("CreateAjax", "Documents")', {
+                const response = await fetch('@Url.Action("CreateAjax", "AIContents")', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ Content: content, UserId: userId })

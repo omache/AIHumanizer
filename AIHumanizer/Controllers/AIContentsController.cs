@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,7 +81,7 @@ namespace AIHumanizer.Controllers
 
 
             var apiKey = "AIzaSyCi1OqWEfZ5Lcm5oMXIRiUbXg3ace4Hn7Y";
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "text", "content.txt");
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "text", "context.txt");
 
             using StreamReader reader = new(filePath);
 
