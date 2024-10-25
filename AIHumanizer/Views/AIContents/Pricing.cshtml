@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --primary-color: #007bff;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-subtitle {
+            font-size: 1.25rem;
+            color: #666;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary-color);
+            position: relative;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .price-period {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #444;
+        }
+
+        .feature-item::before {
+            content: "✓";
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .primary-button {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .primary-button:hover {
+            background: #0056b3;
+        }
+
+        .secondary-button {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .secondary-button:hover {
+            background: #dae0e5;
+        }
+
+        @@media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="pricing-container">
+        <div class="pricing-header">
+            <h1 class="pricing-title">Simple, Transparent Pricing</h1>
+            <p class="pricing-subtitle">Choose the perfect plan for your content humanization needs</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <h2 class="plan-name">Free</h2>
+                    <div class="plan-price">$0<span class="price-period">/month</span></div>
+                </div>
+                <ul class="feature-list">
+                    <li class="feature-item">5 AI content checks per day</li>
+                    <li class="feature-item">Basic humanization features</li>
+                    <li class="feature-item">Web-based access</li>
+                    <li class="feature-item">Community support</li>
+                </ul>
+                <button class="cta-button secondary-button"
+                        onclick="location.href='@Url.Action("Register", "Account")'">
+                    Get Started Free
+                </button>
+            </div>
+
+            <!-- Pro Plan -->
+            <div class="pricing-card popular">
+                <span class="popular-badge">Most Popular</span>
+                <div class="card-header">
+                    <h2 class="plan-name">Pro</h2>
+                    <div class="plan-price">$10<span class="price-period">/month</span></div>
+                </div>
+                <ul class="feature-list">
+                    <li class="feature-item">30 AI content checks per day</li>
+                    <li class="feature-item">Advanced humanization features</li>
+                    <li class="feature-item">Priority support</li>
+                    <li class="feature-item">API access</li>
+                    <li class="feature-item">Detailed analytics</li>
+                </ul>
+                <button class="cta-button primary-button"
+                        onclick="location.href='@Url.Action("Subscribe", "Account", new { plan = "pro" })'">
+                    Get Pro
+                </button>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <h2 class="plan-name">Enterprise</h2>
+                    <div class="plan-price">$20<span class="price-period">/month</span></div>
+                </div>
+                <ul class="feature-list">
+                    <li class="feature-item">Unlimited AI content checks</li>
+                    <li class="feature-item">Premium humanization features</li>
+                    <li class="feature-item">24/7 priority support</li>
+                    <li class="feature-item">Full API access</li>
+                    <li class="feature-item">Advanced analytics</li>
+                    <li class="feature-item">Custom solutions</li>
+                </ul>
+                <button class="cta-button secondary-button"
+                        onclick="location.href='@Url.Action("Subscribe", "Account", new { plan = "enterprise" })'">
+                    Get Enterprise
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
