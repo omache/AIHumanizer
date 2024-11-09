@@ -1,8 +1,325 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model AIHumanizer.Models.AIContent;
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<ApplicationUser> userManager;
+
+@{
+    ViewData["Title"] = "AI Content Humanizer";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid px-4 py-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-5 text-primary fw-bold mb-3">AI Content Humanizer</h1>
+            <p class="lead text-muted mb-4">Transform your AI-generated content into natural, human-like text with our advanced humanization engine.</p>
+            <div class="border-bottom border-2 w-25 mx-auto"></div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Form Column -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="material-icons text-primary me-2" style="font-size: 24px;">edit</i>
+                            <h5 class="mb-0">Input Content</h5>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="material-icons align-middle me-1">format_size</i>
+                                    Font Size
+                                </button>
+                                <ul class="dropdown-menu" id="fontSizeMenu">
+                                    <li><a class="dropdown-item" href="#" data-size="14">14px</a></li>
+                                    <li><a class="dropdown-item" href="#" data-size="16">16px</a></li>
+                                    <li><a class="dropdown-item" href="#" data-size="18">18px</a></li>
+                                    <li><a class="dropdown-item" href="#" data-size="20">20px</a></li>
+                                </ul>
+                            </div>
+                            <span class="badge rounded-pill" id="wordCount">0 / 250 words</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="documentForm">
+                        <div class="form-group position-relative">
+                            <textarea asp-for="Content" id="myBox" class="form-control border-0 shadow-none"
+                                    style="height: 60vh; resize: none; font-size: 16px; line-height: 1.6;"
+                                    oninput="updateWordCount()"
+                                    placeholder="Paste your AI-generated content here..."></textarea>
+                            <div class="position-absolute bottom-0 start-0 p-3 bg-light w-100 border-top" id="textareaFooter">
+                                <div class="progress mb-2" style="height: 6px;">
+                                    <div class="progress-bar" id="wordCountProgress" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted">Min: 20 words | Max: 250 words</small>
+                            </div>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="alert alert-danger mt-3" id="warningMessage" style="display:none;">
+                            <div class="d-flex align-items-center">
+                                <i class="material-icons text-danger me-2">error_outline</i>
+                                <div>Word limit exceeded. Please reduce your content to 250 words or less.</div>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" asp-for="UserId" value="@userManager.GetUserId(User)" />
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center" onclick="clearContent()">
+                                <i class="material-icons me-2">delete_outline</i>
+                                Clear
+                            </button>
+                            <button type="submit" id="submitButton" class="btn btn-primary d-flex align-items-center" disabled>
+                                <i class="material-icons me-2">auto_fix_high</i>
+                                <span id="submitText">Humanize Content</span>
+                                <div class="spinner-border spinner-border-sm ms-2" id="submitSpinner" style="display: none;"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Output Column -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100" id="outputBox" style="display: none;">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="material-icons text-primary me-2" style="font-size: 24px;">description</i>
+                            <h5 class="mb-0">Humanized Output</h5>
+                        </div>
+                        <div class="btn-group">
+                            <button id="copyButton" class="btn btn-outline-primary btn-sm" onclick="copyToClipboard()">
+                                <i class="material-icons align-middle me-1">content_copy</i>
+                                <span id="copyText">Copy</span>
+                            </button>
+                            <button id="downloadButton" class="btn btn-outline-primary btn-sm" onclick="downloadContent()">
+                                <i class="material-icons align-middle me-1">download</i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body position-relative" style="height: 60vh;">
+                    <textarea id="submittedContent" class="form-control h-100 border-0" readonly
+                            style="resize: none; display: none; line-height: 1.6;"></textarea>
+                    
+                    <div id="countdownDisplay" class="position-absolute top-50 start-50 translate-middle text-center" style="display: none;">
+                        <div class="progress-ring position-relative mb-4">
+                            <div class="position-absolute top-50 start-50 translate-middle">
+                                <span class="display-4 fw-bold text-primary" id="countdownNumber">10</span>
+                            </div>
+                            <svg width="120" height="120">
+                                <circle id="progressCircle" cx="60" cy="60" r="54" stroke="#007bff" stroke-width="4" fill="none"/>
+                            </svg>
+                        </div>
+                        <h5 class="mb-2">Humanizing your content</h5>
+                        <p class="text-muted mb-0">Please wait while we process your text...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Stats Card -->
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-6">
+            <div class="card bg-light border-0" id="usageStats" style="display: none;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="material-icons text-primary me-3" style="font-size: 24px;">analytics</i>
+                        <div>
+                            <h6 class="mb-1">Usage Statistics</h6>
+                            <p class="mb-0" id="usageText"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        let copyTimeout;
+        
+        function updateWordCount() {
+            const textarea = document.getElementById('myBox');
+            const wordCountDisplay = document.getElementById('wordCount');
+            const submitButton = document.getElementById('submitButton');
+            const warningMessage = document.getElementById('warningMessage');
+            const progressBar = document.getElementById('wordCountProgress');
+            
+            const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            const percentage = Math.min((wordCount / 250) * 100, 100);
+            
+            // Update progress bar
+            progressBar.style.width = `${percentage}%`;
+            if (wordCount > 250) {
+                progressBar.classList.remove('bg-primary', 'bg-warning');
+                progressBar.classList.add('bg-danger');
+            } else if (wordCount >= 20) {
+                progressBar.classList.remove('bg-danger', 'bg-warning');
+                progressBar.classList.add('bg-primary');
+            } else {
+                progressBar.classList.remove('bg-primary', 'bg-danger');
+                progressBar.classList.add('bg-warning');
+            }
+            
+            // Update word count badge
+            wordCountDisplay.textContent = `${wordCount} / 250 words`;
+            wordCountDisplay.className = 'badge rounded-pill ' + 
+                (wordCount > 250 ? 'bg-danger' : 
+                wordCount >= 20 ? 'bg-primary' : 
+                'bg-warning');
+            
+            // Update button state
+            submitButton.disabled = wordCount < 20 || wordCount > 250;
+            warningMessage.style.display = wordCount > 250 ? 'block' : 'none';
+        }
+
+        function clearContent() {
+            document.getElementById('myBox').value = '';
+            updateWordCount();
+        }
+
+        function copyToClipboard() {
+            const content = document.getElementById('submittedContent');
+            const copyBtn = document.getElementById('copyButton');
+            const copyText = document.getElementById('copyText');
+            
+            content.select();
+            document.execCommand('copy');
+            
+            copyText.textContent = 'Copied!';
+            copyBtn.classList.remove('btn-outline-primary');
+            copyBtn.classList.add('btn-success');
+            
+            clearTimeout(copyTimeout);
+            copyTimeout = setTimeout(() => {
+                copyText.textContent = 'Copy';
+                copyBtn.classList.remove('btn-success');
+                copyBtn.classList.add('btn-outline-primary');
+            }, 2000);
+        }
+
+        function downloadContent() {
+            const content = document.getElementById('submittedContent').value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = 'humanized-content.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('documentForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            const outputBox = document.getElementById('outputBox');
+            const submittedContent = document.getElementById('submittedContent');
+            const countdownDisplay = document.getElementById('countdownDisplay');
+            const countdownNumber = document.getElementById('countdownNumber');
+            const progressCircle = document.getElementById('progressCircle');
+            const usageStats = document.getElementById('usageStats');
+            
+            // Update UI for processing state
+            submitButton.disabled = true;
+            submitText.textContent = 'Processing...';
+            submitSpinner.style.display = 'inline-block';
+            outputBox.style.display = 'block';
+            submittedContent.style.display = 'none';
+            countdownDisplay.style.display = 'block';
+            
+            let countdown = 10;
+            const circumference = 2 * Math.PI * 54; // circle radius * 2π
+            
+            try {
+                const content = document.getElementById('myBox').value;
+                const userId = document.querySelector('input[name="UserId"]').value;
+                
+                const contentPromise = fetch('/Home/CreateAjax', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Content: content, UserId: userId })
+                });
+                
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownNumber.textContent = countdown;
+                    
+                    // Update progress circle
+                    const progress = (10 - countdown) / 10;
+                    const dashOffset = circumference * (1 - progress);
+                    progressCircle.style.strokeDasharray = circumference;
+                    progressCircle.style.strokeDashoffset = dashOffset;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+                
+                const response = await contentPromise;
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to process content');
+                }
+                
+                // Wait for countdown to finish
+                setTimeout(() => {
+                    countdownDisplay.style.display = 'none';
+                    submittedContent.value = data.modifiedContent;
+                    submittedContent.style.display = 'block';
+                    
+                    // Update usage stats
+                    usageStats.style.display = 'block';
+                    document.getElementById('usageText').innerHTML = `
+                        <span class="fw-bold">${data.remainingSamples}</span> uses remaining 
+                        <span class="text-muted">• Resets in ${Math.round(data.hoursUntilReset)} hours</span>
+                    `;
+                    
+                    // Reset submit button
+                    submitButton.disabled = false;
+                    submitText.textContent = 'Humanize Content';
+                    submitSpinner.style.display = 'none';
+                }, countdown * 1000);
+                
+            } catch (error) {
+                countdownDisplay.style.display = 'none';
+                submittedContent.style.display = 'block';
+                submittedContent.value = `Error: ${error.message}`;
+                
+                submitButton.disabled = false;
+                submitText.textContent = 'Humanize Content';
+                submitSpinner.style.display = 'none';
+            }
+        });
+
+        // Font size handling
+        document.getElementById('fontSizeMenu').addEventListener('click', function(e) {
+            if (e.target.classList.contains('dropdown-item')) {
+                e.preventDefault();
+                const size = e.target.dataset.size;
+                document.getElementById('myBox').style.fontSize = `${size}px`;
+                document.getElementById('submittedContent').style.fontSize = `${size}px`;
+            }
+        });
+        </script>
+        }
