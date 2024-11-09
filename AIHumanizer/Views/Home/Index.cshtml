@@ -3,7 +3,7 @@
 @inject UserManager<ApplicationUser> userManager;
 
 @{
-    ViewData["Title"] = "AI Content Humanizer";
+    ViewData["Title"] = "Home";
 }
 
 <div class="container-fluid px-4 py-5">
@@ -279,7 +279,12 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Failed to process content');
+                    if (data.redirectUrl) {
+                        // Redirect user if redirect URL is present
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        throw new Error(data.error || 'Failed to process content');
+                    }
                 }
 
                 // Wait for countdown to finish

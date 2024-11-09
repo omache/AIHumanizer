@@ -63,7 +63,8 @@ namespace AIHumanizer.Controllers
                     return BadRequest(new
                     {
                         error = "No more samples available. Please sign in or create an account to increase your limit.",
-                        promptSignIn = true
+                        promptSignIn = true,
+                        redirectUrl = Url.Action("Login", "Account", new { area = "Identity" })
                     });
                 }
 
@@ -71,7 +72,8 @@ namespace AIHumanizer.Controllers
                 return BadRequest(new
                 {
                     error = $"No more samples available. Try again in {Math.Round(hoursUntilReset, 1)} hours.",
-                    hoursUntilReset = Math.Round(hoursUntilReset, 1)
+                    hoursUntilReset = Math.Round(hoursUntilReset, 1),
+                    redirectUrl = Url.Action("Pricing", "Home")
                 });
             }
 

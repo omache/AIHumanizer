@@ -4,31 +4,70 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #007bff;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary-color: #1f2937;
+            --accent-color: #818cf8;
+            --background-color: #f3f4f6;
+            --card-background: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
         }
 
         .pricing-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 4rem 1rem;
         }
 
         .pricing-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
+            padding: 0 1rem;
         }
 
         .pricing-title {
-            font-size: 2.5rem;
-            color: #333;
+            font-size: 3rem;
+            color: var(--secondary-color);
             margin-bottom: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
         }
 
         .pricing-subtitle {
             font-size: 1.25rem;
-            color: #666;
+            color: #4b5563;
+            max-width: 600px;
+            margin: 0 auto 1rem;
+        }
+
+        .support-info {
+            background-color: #e0e7ff;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            max-width: 600px;
+            margin: 2rem auto;
+            border: 1px solid var(--accent-color);
+        }
+
+        .support-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .support-info a:hover {
+            text-decoration: underline;
         }
 
         .pricing-grid {
@@ -36,57 +75,68 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             padding: 1rem;
+            perspective: 1000px;
         }
 
         .pricing-card {
-            background: white;
-            border-radius: 8px;
+            background: var(--card-background);
+            border-radius: 16px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 2rem;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
             border: 2px solid transparent;
         }
 
         .pricing-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         .pricing-card.popular {
             border-color: var(--primary-color);
-            position: relative;
+            background: linear-gradient(145deg, #ffffff 0%, #f3f4ff 100%);
         }
 
         .popular-badge {
             position: absolute;
-            top: -12px;
-            right: 2rem;
+            top: 1rem;
+            right: -4rem;
             background: var(--primary-color);
             color: white;
-            padding: 0.25rem 1rem;
-            border-radius: 20px;
+            padding: 0.5rem 4rem;
+            transform: rotate(45deg);
             font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
             text-align: center;
             margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
         }
 
         .plan-name {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-weight: 700;
         }
 
         .plan-price {
-            font-size: 2.5rem;
-            color: #333;
-            font-weight: bold;
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            font-weight: 800;
+            line-height: 1;
         }
 
         .price-period {
-            color: #666;
-            font-size: 1rem;
+            color: #6b7280;
+            font-size: 1.125rem;
+            font-weight: 400;
         }
 
         .feature-list {
@@ -99,59 +149,72 @@
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
-            color: #444;
+            color: #4b5563;
+            font-size: 1.rem;
         }
 
-        .feature-item::before {
-            content: "✓";
+        .feature-item i {
             color: var(--primary-color);
-            margin-right: 0.5rem;
-            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
         }
 
         .cta-button {
-            display: block;
+            display: inline-block;
             width: 100%;
             padding: 1rem;
             border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
         }
 
         .primary-button {
             background: var(--primary-color);
             color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
         }
 
         .primary-button:hover {
-            background: #0056b3;
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(79, 70, 229, 0.3);
         }
 
         .secondary-button {
-            background: #e9ecef;
-            color: #333;
+            background: #e5e7eb;
+            color: var(--secondary-color);
         }
 
         .secondary-button:hover {
-            background: #dae0e5;
+            background: #d1d5db;
+            transform: translateY(-2px);
         }
+ 
 
-        @@media (max-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: 1fr;
+            .pricing-title {
+                font-size: 2.5rem;
+            }
+
+            .pricing-card {
+                margin-bottom: 1rem;
             }
         }
     </style>
 </head>
 
-<body class="bg-light">
+<body>
     <div class="pricing-container">
         <div class="pricing-header">
-            <h1 class="pricing-title">Simple, Transparent Pricing</h1>
-            <p class="pricing-subtitle">Choose the perfect plan for your content humanization needs</p>
+            <h1 class="pricing-title">Choose Your Perfect Plan</h1>
+            <p class="pricing-subtitle">Unlock the full potential of AI content humanization with our flexible pricing options</p>
+            <div class="support-info">
+                <p>Having issues with your subscription? Contact our support team at <a href="mailto:omacherenox@gmail.com">omacherenox@gmail.com</a></p>
+            </div>
         </div>
 
         <div class="pricing-grid">
@@ -162,15 +225,24 @@
                     <div class="plan-price">$0<span class="price-period">/month</span></div>
                 </div>
                 <ul class="feature-list">
-                    <li class="feature-item">5 AI content checks per day</li>
-                    <li class="feature-item">Basic humanization features</li>
-                    <li class="feature-item">Web-based access</li>
-                    <li class="feature-item">Community support</li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        5 AI content checks per day
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Basic humanization features
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Web-based access
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Community support
+                    </li>
                 </ul>
-                <button class="cta-button secondary-button"
-                        onclick="location.href='@Url.Action("Register", "Account")'">
-                    Get Started Free
-                </button>
+                <button class="cta-button secondary-button">Get Started Free</button>
             </div>
 
             <!-- Pro Plan -->
@@ -181,16 +253,28 @@
                     <div class="plan-price">$10<span class="price-period">/month</span></div>
                 </div>
                 <ul class="feature-list">
-                    <li class="feature-item">30 AI content checks per day</li>
-                    <li class="feature-item">Advanced humanization features</li>
-                    <li class="feature-item">Priority support</li>
-                    <li class="feature-item">API access</li>
-                    <li class="feature-item">Detailed analytics</li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        30 AI content checks per day
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Advanced humanization features
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Priority support
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        API access
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Detailed analytics
+                    </li>
                 </ul>
-                <button class="cta-button primary-button"
-                        onclick="location.href='@Url.Action("Subscribe", "Account", new { plan = "pro" })'">
-                    Get Pro
-                </button>
+                <button class="cta-button primary-button">Get Pro</button>
             </div>
 
             <!-- Enterprise Plan -->
@@ -200,17 +284,32 @@
                     <div class="plan-price">$20<span class="price-period">/month</span></div>
                 </div>
                 <ul class="feature-list">
-                    <li class="feature-item">Unlimited AI content checks</li>
-                    <li class="feature-item">Premium humanization features</li>
-                    <li class="feature-item">24/7 priority support</li>
-                    <li class="feature-item">Full API access</li>
-                    <li class="feature-item">Advanced analytics</li>
-                    <li class="feature-item">Custom solutions</li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Unlimited AI content checks
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Premium humanization features
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        24/7 priority support
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Full API access
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Advanced analytics
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        Custom solutions
+                    </li>
                 </ul>
-                <button class="cta-button secondary-button"
-                        onclick="location.href='@Url.Action("Subscribe", "Account", new { plan = "enterprise" })'">
-                    Get Enterprise
-                </button>
+                <button class="cta-button primary-button">Get Enterprise</button>
             </div>
         </div>
     </div>
