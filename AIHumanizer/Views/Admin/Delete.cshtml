@@ -1,0 +1,11 @@
+@model AIHumanizer.Models.ApplicationUser
+
+<h2>Delete User</h2>
+
+<p>Are you sure you want to delete user <strong>@Model.UserName</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

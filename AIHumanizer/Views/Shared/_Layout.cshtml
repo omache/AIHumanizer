@@ -12,23 +12,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TextEditor.styles.css" asp-append-version="true" />
 
-    <!-- TinyMCE -->
-    <script src="https://cdn.tiny.cloud/1/y7hulcp9s4tmo62wv1fp3cy4q7mb1a9gx0roaor3lqkfuu4q/tinymce/7/tinymce.min.js"
-            referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea#tiny',
-            skin: 'oxide',
-            plugins: [
-                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'markdown',
-                'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-                'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
-            ],
-            toolbar: 'undo redo | a11ycheck casechange blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify |' +
-                'bullist numlist checklist outdent indent | removeformat | code table help'
-        });
-    </script>
-
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -108,11 +91,10 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                     <i class="material-icons">edit_note</i>
                     AI Content Editor
                 </a>
-
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -120,23 +102,30 @@
 
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-nav me-auto">
+                        @{
+                            var currentAction = ViewContext?.RouteData?.Values["Action"]?.ToString() ?? "";
+                        }
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
-                               asp-controller="Documents" asp-action="Index">
+                            <a class="nav-link @(currentAction.Equals("Index", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                               href="@Url.Action("Index", "AIContents")">
                                 <i class="material-icons align-middle me-1" style="font-size: 20px;">home</i>
                                 Home
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Pricing" ? "active" : "")"
-                               asp-controller="Documents" asp-action="Pricing">
+                            <a class="nav-link @(currentAction.Equals("Pricing", StringComparison.OrdinalIgnoreCase) ? "active" : "")"
+                               href="@Url.Action("Pricing", "AIContents")">
                                 <i class="material-icons align-middle me-1" style="font-size: 20px;">payments</i>
                                 Pricing
                             </a>
                         </li>
                     </ul>
 
-                    @await Html.PartialAsync("_LoginPartial")
+                    @if (!string.Equals(currentAction, "Login", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(currentAction, "Register", StringComparison.OrdinalIgnoreCase))
+                    {
+                        @await Html.PartialAsync("_LoginPartial")
+                    }
                 </div>
             </div>
         </nav>
@@ -155,7 +144,7 @@
                     <p class="mb-0">&copy; @DateTime.Now.Year - AI Content Editor - All rights reserved</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a class="text-decoration-none text-muted me-3" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                    <a class="text-decoration-none text-muted me-3" href="@Url.Action("Privacy", "Home")">Privacy Policy</a>
                     <a class="text-decoration-none text-muted me-3" href="#">Terms of Service</a>
                     <a class="text-decoration-none text-muted" href="#">Contact Us</a>
                 </div>
@@ -163,11 +152,11 @@
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-

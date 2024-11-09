@@ -37,7 +37,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=AIContents}/{action=Index}/{id?}");
+    pattern: "{controller=AIContents}/{action=Create}");
 app.MapRazorPages();
 
 app.Run();

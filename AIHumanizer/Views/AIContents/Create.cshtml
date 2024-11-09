@@ -102,6 +102,7 @@
                 </div>
             </div>
         </div>
+        <h3 id=wordContent >Remaining Content: </h3>
     </div>
 </div>
 
@@ -111,140 +112,119 @@
     }
     <script>
         function updateWordCount() {
-            const textarea = document.getElementById('myBox');
-            const wordCountDisplay = document.getElementById('wordCount');
-            const submitButton = document.getElementById('submitButton');
-            const warningMessage = document.getElementById('warningMessage');
+    const textarea = document.getElementById('myBox');
+    const wordCountDisplay = document.getElementById('wordCount');
+    const submitButton = document.getElementById('submitButton');
+    const warningMessage = document.getElementById('warningMessage');
 
-            const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
-            const wordCount = words.length;
+    const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
 
-            wordCountDisplay.textContent = `${wordCount} / 250 words`;
+    wordCountDisplay.textContent = `${wordCount} / 250 words`;
 
-            if (wordCount <= 20 || wordCount > 250) {
-                submitButton.disabled = true;
-                warningMessage.style.display = wordCount > 250 ? 'block' : 'none';
-                if (wordCount <= 20) {
-                    submitButton.classList.remove('btn-danger');
-                    submitButton.classList.add('btn-primary');
-                } else {
-                    submitButton.classList.remove('btn-primary');
-                    submitButton.classList.add('btn-danger');
-                }
-            } else {
-                submitButton.disabled = false;
-                submitButton.classList.remove('btn-danger');
-                submitButton.classList.add('btn-primary');
-                warningMessage.style.display = 'none';
+    if (wordCount <= 20 || wordCount > 250) {
+        submitButton.disabled = true;
+        warningMessage.style.display = wordCount > 250 ? 'block' : 'none';
+        if (wordCount <= 20) {
+            submitButton.classList.remove('btn-danger');
+            submitButton.classList.add('btn-primary');
+        } else {
+            submitButton.classList.remove('btn-primary');
+            submitButton.classList.add('btn-danger');
+        }
+    } else {
+        submitButton.disabled = false;
+        submitButton.classList.remove('btn-danger');
+        submitButton.classList.add('btn-primary');
+        warningMessage.style.display = 'none';
+    }
+}
+
+document.getElementById('documentForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    document.getElementById('outputBox').style.display = 'block';
+    document.getElementById('submittedContent').style.display = 'none';
+     
+    const countdownDisplay = document.getElementById('countdownDisplay');
+    const countdownNumber = document.getElementById('countdownNumber');
+    const wordContent = document.getElementById('wordContent');
+    countdownDisplay.style.display = 'block';
+
+    let countdown = 10;
+    let contentData = null;
+
+    const contentPromise = sendContentToServer();
+
+    const countdownInterval = setInterval(async () => {
+        countdown--;
+        countdownNumber.textContent = countdown;
+
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+
+            if (!contentData) {
+                contentData = await contentPromise;
+            }
+
+            countdownDisplay.style.display = 'none';
+            const submittedContent = document.getElementById('submittedContent');
+            submittedContent.value = contentData.modifiedContent;
+            
+            // Update the remaining content display with proper formatting
+            const remainingContent = contentData.remainingSamples;
+            const hoursUntilReset = contentData.hoursUntilReset;
+            wordContent.innerHTML = `
+                <div class="alert alert-info mt-3">
+                    <i class="material-icons align-middle me-2">info</i>
+                    Remaining Uses: <strong>${remainingContent}</strong>
+                    <br>
+                    <small class="text-muted">Resets in ${Math.round(hoursUntilReset)} hours</small>
+                </div>
+            `;
+
+            submittedContent.style.display = 'block';
+        }
+
+        if (!contentData) {
+            const result = await Promise.race([
+                contentPromise,
+                new Promise(resolve => setTimeout(resolve, 0))
+            ]);
+            if (result) {
+                contentData = result;
             }
         }
+    }, 1000);
+});
 
-        function changeFontSize() {
-            const textarea = document.getElementById('myBox');
-            const fontSize = document.getElementById('fontSizeSelect').value;
-            textarea.style.fontSize = `${fontSize}px`;
-        }
+async function sendContentToServer() {
+    const content = document.getElementById('myBox').value;
+    const userId = document.querySelector('input[name="UserId"]').value;
 
-        function clearContent() {
-            if (confirm('Are you sure you want to clear all content?')) {
-                document.getElementById('myBox').value = '';
-                updateWordCount();
-            }
-        }
-
-        function downloadContent() {
-            const content = document.getElementById('submittedContent').value;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'humanized-content.txt';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        }
-
-        document.getElementById('documentForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            document.getElementById('outputBox').style.display = 'block';
-            document.getElementById('submittedContent').style.display = 'none';
-            const countdownDisplay = document.getElementById('countdownDisplay');
-            const countdownNumber = document.getElementById('countdownNumber');
-            countdownDisplay.style.display = 'block';
-
-            let countdown = 10;
-            let contentData = null;
-
-            const contentPromise = sendContentToServer();
-
-            const countdownInterval = setInterval(async () => {
-                countdown--;
-                countdownNumber.textContent = countdown;
-
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-
-                    if (!contentData) {
-                        contentData = await contentPromise;
-                    }
-
-                    countdownDisplay.style.display = 'none';
-                    const submittedContent = document.getElementById('submittedContent');
-                    submittedContent.value = contentData.modifiedContent;
-                    submittedContent.style.display = 'block';
-                }
-
-                if (!contentData) {
-                    const result = await Promise.race([
-                        contentPromise,
-                        new Promise(resolve => setTimeout(resolve, 0))
-                    ]);
-                    if (result) {
-                        contentData = result;
-                    }
-                }
-            }, 1000);
+    try {
+        const response = await fetch('/AIContents/CreateAjax', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Content: content, UserId: userId })
         });
 
-        async function sendContentToServer() {
-            const content = document.getElementById('myBox').value;
-            const userId = "@userManager.GetUserId(User)";
-
-            try {
-                const response = await fetch('@Url.Action("CreateAjax", "AIContents")', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ Content: content, UserId: userId })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Server response was not OK');
-                }
-
-                return await response.json();
-            } catch (error) {
-                alert('Error: ' + error.message);
-                throw error;
-            }
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Server response was not OK');
         }
 
-        function copyToClipboard() {
-            const textArea = document.getElementById('submittedContent');
-            textArea.select();
-            document.execCommand('copy');
-
-            // Show a temporary success message
-            const copyButton = document.getElementById('copyButton');
-            const originalText = copyButton.innerHTML;
-            copyButton.innerHTML = '<i class="material-icons align-middle me-1">check</i>Copied!';
-            copyButton.disabled = true;
-
-            setTimeout(() => {
-                copyButton.innerHTML = originalText;
-                copyButton.disabled = false;
-            }, 2000);
-        }
+        return await response.json();
+    } catch (error) {
+        const wordContent = document.getElementById('wordContent');
+        wordContent.innerHTML = `
+            <div class="alert alert-danger mt-3">
+                <i class="material-icons align-middle me-2">error</i>
+                ${error.message}
+            </div>
+        `;
+        throw error;
+    }
+}
     </script>
 }
