@@ -5,7 +5,7 @@
 namespace AIHumanizer.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedIdentityUser : Migration
+    public partial class UpdatedApplicationUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
