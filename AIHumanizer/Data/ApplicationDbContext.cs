@@ -12,5 +12,6 @@ namespace AIHumanizer.Data
         }
 
         public DbSet<AIHumanizer.Models.AIContent> AIContent { get; set; } = default!;
+        
     }
 }
