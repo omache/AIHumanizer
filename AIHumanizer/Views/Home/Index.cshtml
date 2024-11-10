@@ -39,7 +39,7 @@
                                     <li><a class="dropdown-item" href="#" data-size="20">20px</a></li>
                                 </ul>
                             </div>
-                            <span class="badge rounded-pill" id="wordCount">0 / 250 words</span>
+                            <span class="badge rounded-pill" id="wordCount">0 / 150 words</span>
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                                 <div class="progress mb-2" style="height: 6px;">
                                     <div class="progress-bar" id="wordCountProgress" role="progressbar" style="width: 0%"></div>
                                 </div>
-                                <small class="text-muted">Min: 20 words | Max: 250 words</small>
+                                <small class="text-muted">Min: 20 words | Max: 150 words</small>
                             </div>
                             <span asp-validation-for="Content" class="text-danger"></span>
                         </div>
@@ -62,7 +62,7 @@
                         <div class="alert alert-danger mt-3" id="warningMessage" style="display:none;">
                             <div class="d-flex align-items-center">
                                 <i class="material-icons text-danger me-2">error_outline</i>
-                                <div>Word limit exceeded. Please reduce your content to 250 words or less.</div>
+                                <div>Word limit exceeded. Please reduce your content to 150 words or less.</div>
                             </div>
                         </div>
 
@@ -160,11 +160,11 @@
 
             const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
             const wordCount = words.length;
-            const percentage = Math.min((wordCount / 250) * 100, 100);
+            const percentage = Math.min((wordCount / 150) * 100, 100);
 
             // Update progress bar
             progressBar.style.width = `${percentage}%`;
-            if (wordCount > 250) {
+            if (wordCount > 150) {
                 progressBar.classList.remove('bg-primary', 'bg-warning');
                 progressBar.classList.add('bg-danger');
             } else if (wordCount >= 20) {
@@ -176,15 +176,15 @@
             }
 
             // Update word count badge
-            wordCountDisplay.textContent = `${wordCount} / 250 words`;
+            wordCountDisplay.textContent = `${wordCount} / 150 words`;
             wordCountDisplay.className = 'badge rounded-pill ' +
-                (wordCount > 250 ? 'bg-danger' :
+                (wordCount > 150 ? 'bg-danger' :
                     wordCount >= 20 ? 'bg-primary' :
                         'bg-warning');
 
             // Update button state
-            submitButton.disabled = wordCount < 20 || wordCount > 250;
-            warningMessage.style.display = wordCount > 250 ? 'block' : 'none';
+            submitButton.disabled = wordCount < 20 || wordCount > 150;
+            warningMessage.style.display = wordCount > 150 ? 'block' : 'none';
         }
 
         function clearContent() {
