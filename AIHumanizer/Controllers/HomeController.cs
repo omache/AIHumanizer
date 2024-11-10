@@ -30,6 +30,12 @@ namespace AIHumanizer.Controllers
             return View();
         }
 
+
+        public async Task<IActionResult> Privacy()
+        {
+            return View();
+        }
+
         // Static field to persist count between requests
         public class ApiResponse
         {

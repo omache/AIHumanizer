@@ -1,10 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+@{
+    ViewData["Title"] = "Pricing";
+}
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -60,15 +59,15 @@
             border: 1px solid var(--accent-color);
         }
 
-        .support-info a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
+            .support-info a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 600;
+            }
 
-        .support-info a:hover {
-            text-decoration: underline;
-        }
+                .support-info a:hover {
+                    text-decoration: underline;
+                }
 
         .pricing-grid {
             display: grid;
@@ -89,15 +88,15 @@
             border: 2px solid transparent;
         }
 
-        .pricing-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+            .pricing-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
 
-        .pricing-card.popular {
-            border-color: var(--primary-color);
-            background: linear-gradient(145deg, #ffffff 0%, #f3f4ff 100%);
-        }
+            .pricing-card.popular {
+                border-color: var(--primary-color);
+                background: linear-gradient(145deg, #ffffff 0%, #f3f4ff 100%);
+            }
 
         .popular-badge {
             position: absolute;
@@ -153,11 +152,11 @@
             font-size: 1.rem;
         }
 
-        .feature-item i {
-            color: var(--primary-color);
-            margin-right: 0.75rem;
-            font-size: 1.25rem;
-        }
+            .feature-item i {
+                color: var(--primary-color);
+                margin-right: 0.75rem;
+                font-size: 1.25rem;
+            }
 
         .cta-button {
             display: inline-block;
@@ -179,30 +178,31 @@
             box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
         }
 
-        .primary-button:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(79, 70, 229, 0.3);
-        }
+            .primary-button:hover {
+                background: var(--primary-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 8px rgba(79, 70, 229, 0.3);
+            }
 
         .secondary-button {
             background: #e5e7eb;
             color: var(--secondary-color);
         }
 
-        .secondary-button:hover {
-            background: #d1d5db;
-            transform: translateY(-2px);
+            .secondary-button:hover {
+                background: #d1d5db;
+                transform: translateY(-2px);
+            }
+
+
+        .pricing-title {
+            font-size: 2.5rem;
         }
- 
 
-            .pricing-title {
-                font-size: 2.5rem;
-            }
+        .pricing-card {
+            margin-bottom: 1rem;
+        }
 
-            .pricing-card {
-                margin-bottom: 1rem;
-            }
         }
     </style>
 </head>
@@ -274,7 +274,8 @@
                         Detailed analytics
                     </li>
                 </ul>
-                <button class="cta-button primary-button">Get Pro</button>
+                <a href="https://www.paypal.com/ncp/payment/RFVD2D4UR2RQG"><button class="cta-button primary-button">Get Pro</button></a>
+
             </div>
 
             <!-- Enterprise Plan -->
@@ -309,10 +310,9 @@
                         Custom solutions
                     </li>
                 </ul>
-                <button class="cta-button primary-button">Get Enterprise</button>
+                <a href="https://www.paypal.com/ncp/payment/E5FQ3DEJ4H2JW"><button class="cta-button primary-button">Get Enterprise</button></a>
             </div>
         </div>
     </div>
 </body>
 
-</html>
