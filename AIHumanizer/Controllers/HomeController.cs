@@ -70,7 +70,7 @@ namespace AIHumanizer.Controllers
                     {
                         error = "No more samples available. Please sign in or create an account to increase your limit.",
                         promptSignIn = true,
-                        redirectUrl = Url.Action("Login", "Account", new { area = "Identity" })
+                        redirectUrl = "/Identity/Account/Login"
                     });
                 }
 
